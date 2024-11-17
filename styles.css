@@ -17,7 +17,13 @@
     flex: 1;
     align-items: flex-end;
     justify-content: flex-end;
+    padding: 0px 5px 0px 10px;
+
+}
+
+#display-text {
     font-size: 4em;
+    overflow: hidden;
 }
 
 #button-container {

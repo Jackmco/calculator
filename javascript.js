@@ -1,68 +1,125 @@
 let num1 = ""
 let num2 = ""
 let operation = ""
-let activeInput = "num1"
+let activeInput = "num1" // active input begins on num1 because first input is awlays num1
+let currentDisplayNumber = ""
+let numberInputs = "0123456789"
+let equalButton = document.querySelector("#equal-button")
+let numberButtons = document.querySelectorAll(".core-button")
+let operationButtons = document.querySelectorAll(".operation-button")
+let clearButton = document.querySelector("#clear-button")
+let swapSignButton = document.querySelector("#swap-sign-button")
+let percentButton = document.querySelector("#percent-button")
 
 // press number buttons to display them
-let numberButtons = document.querySelectorAll(".core-button")
+// the below works for clicking buttons
+// numberButtons.forEach(button => {
+//     button.addEventListener("click", (e) => { 
+//         numberSelected = e.target.textContent
+//         if (numberSelected == "." && currentDisplayNumber.includes(".")) {
+//         }
+//         else {
+//             currentDisplayNumber += numberSelected
+//             document.querySelector("#display-text").textContent = currentDisplayNumber
+//             if (activeInput == "num1") { // log number 1, prep for 2nd number, clear display
+//                 num1 = currentDisplayNumber
+//             }
+//             else if (activeInput == "num2") { // log number 2 and clear active input
+//                 num2 = currentDisplayNumber
+//             }
+//         }
+//     }) 
+// })
+
+// press number buttons with mouse
 numberButtons.forEach(button => {
-    button.addEventListener("click", (e) => {
-        numberSelected = e.target.textContent
-        if (activeInput === "num1") {
-            num1 += numberSelected
-            document.querySelector("#display").textContent = num1
-        }
-        else if (activeInput === "num2") {
-            num2 += numberSelected
-            document.querySelector("#display").textContent = num2
-        }
+        button.addEventListener("click", (e) => enterNumber(e.target.textContent))
     })
+
+// use keyboard for numbers & backspace
+document.addEventListener("keyup", (e) => {
+    if (e.key == "Backspace") {
+        currentDisplayNumber = currentDisplayNumber.slice(0,-1)
+        document.querySelector("#display-text").textContent = currentDisplayNumber
+    } 
+    else if (numberInputs.includes(e.key)) {
+        console.log(e.key)
+        enterNumber(e.key)        
+    }
 })
 
+function enterNumber(number) {
+    if (number == "." && currentDisplayNumber.includes(".")) {
+                }
+    else {
+        currentDisplayNumber += number
+        document.querySelector("#display-text").textContent = currentDisplayNumber
+        if (activeInput == "num1") { // log number 1, prep for 2nd number, clear display
+            num1 = currentDisplayNumber
+        }
+        else if (activeInput == "num2") { // log number 2 and clear active input
+            num2 = currentDisplayNumber
+        }}
+    }
+
 // press operation buttons to set the operator
-let operationButtons = document.querySelectorAll(".operation-button")
 operationButtons.forEach(button => {
     button.addEventListener("click", (e) => {
+        // set the operation, highlight the button, clear display
         operationButtons.forEach((button) => {button.style.backgroundColor = "#6b7609"})
         operation = e.target.textContent
         e.target.style.backgroundColor = "#abbd0f"
-        document.querySelector("#display").textContent = ""
-        activeInput = "num2"
-        clearButton.textContent = "C"
-        })
-    })
+        if (activeInput == "num1" || activeInput == "num2") { // if you press an operator and just entered the first number
+            document.querySelector("#display-text").textContent = ""
+            currentDisplayNumber = ""
+            activeInput = 'num2'
+            clearButton.textContent = "C"
+        }}
+)})
 
 // press equal button and calculate
-let equalButton = document.querySelector("#equal-button")
 equalButton.addEventListener("click", (e) => {
     operationButtons.forEach((button) => {button.style.backgroundColor = "#6b7609"})
-    answer = operate(num1, num2, operation)
-    console.log(answer)
-    document.querySelector("#display").textContent = answer
-    num1 = answer
+    currentDisplayNumber = operate(num1, num2, operation)
+    console.log(num1, operation, num2, currentDisplayNumber)
+    document.querySelector("#display-text").textContent = currentDisplayNumber
+    num1 = currentDisplayNumber
     num2 = ""
     operation = ""
 })
 
-
 // clear button
-let clearButton = document.querySelector("#clear-button")
 clearButton.addEventListener("click", (e) => {
-     if (clearButton.textContent === "AC") {
-        console.log("full reset")
-        operationButtons.forEach((button) => {button.style.backgroundColor = "#6b7609"})
+    if (activeInput == "num1") {
+        currentDisplayNumber = ""
+        clearButton.textContent = "AC"       
+    }
+    else if (activeInput == "num2" && currentDisplayNumber == "") {
         num1 = ""
         num2 = ""
+        activeInput = "num1"
         clearButton.textContent = "AC"
+        operationButtons.forEach((button) => {button.style.backgroundColor = "#6b7609"})
+        operation = ""
     }
-    else if (clearButton.textContent === "C") {
-        console.log("second reset")
-        num2 = ""
-        clearButton.textContent = "AC"
+    else if (activeInput == "num2") {
+        currentDisplayNumber = ""
+        clearButton.textContent = "C"
     }
-    document.querySelector("#display").textContent = ""
+    document.querySelector("#display-text").textContent = ""
 })
 
+// swap sign button
+swapSignButton.addEventListener("click", (e) => {
+    currentDisplayNumber *= -1
+    document.querySelector("#display-text").textContent = currentDisplayNumber
+})
+
+// % button
+percentButton.addEventListener("click", (e) => {
+    currentDisplayNumber *= .01
+    document.querySelector("#display-text").textContent = currentDisplayNumber
+})
 
 // operator functions
 function add(num1, num2) {
@@ -72,7 +129,6 @@ function add(num1, num2) {
 function subtract(num1, num2) {
     return Number(num1) - Number(num2)
 }
-
 
 function divide(num1, num2) {
     return Number(num1) / Number(num2)
@@ -87,7 +143,6 @@ function makeNumberNegative(num) {
 }
 
 function operate(num1, num2, operation) {
-    console.log(num1, num2, operation)
     if (operation === "+") {
         return add(num1, num2)
     }
